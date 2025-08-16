@@ -7,23 +7,40 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Arimo:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="writing/writing.css">
   <title>Document</title>
   <script src="https://kit.fontawesome.com/77b1d2e451.js" crossorigin="anonymous"></script>
   <script defer src="components/aside.js"></script>
   <script defer src="components/footer.js"></script>
+  <script defer src="writing/writing-script.js"></script>
 </head>
 <body>
-  <my-aside></my-aside>
-  <main>
-    <h1>JOSH PETERS</h1>
-    <div class="bio">
-      <h2></h2>
-    <div>
-    <my-footer>
-      <i class="fa-solid fa-envelope" slot="email-logo"></i>
-      <i class="fa-brands fa-github" slot="github-logo"></i>
-      <i class="fa-brands fa-linkedin" slot="linkedin-logo"></i>
-    </my-footer>
-  </main>
+  <div class="body-container">
+    <my-aside></my-aside>
+    <main>
+      <h1 class="desktop-header">JOSH PETERS</h1>
+      <div class="content-container">
+        <div class="search-wrapper">
+          <label for="search">Search Articles</label>
+          <input type="search" id="search" data-search>
+        </div>
+        <div class="articles" data-articles-container></div>
+        <template data-article-template>
+          <a href="#" class="article">
+            <div class="header">
+              <h2 data-title></h2>
+              <span data-date></span>
+            </div>
+            <div class="tags" data-tags></div>
+          </a>
+        </template>
+      </div>
+      <my-footer>
+        <i class="fa-solid fa-envelope" slot="email-logo"></i>
+        <i class="fa-brands fa-github" slot="github-logo"></i>
+        <i class="fa-brands fa-linkedin" slot="linkedin-logo"></i>
+      </my-footer>
+    </main>
+  </div>
 </body>
 </html>

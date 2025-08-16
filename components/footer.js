@@ -9,6 +9,9 @@ footerTemplate.innerHTML = `
       display: flex;
       align-items: center;
       justify-content: space-between;
+      color: #C6C5B9;
+      margin-top: 10rem;
+      padding-bottom: 5rem;
     }
 
     .social-icons {
@@ -25,10 +28,10 @@ footerTemplate.innerHTML = `
       <a href="#">
         <slot name="email-logo"></slot>
       </a>
-      <a href="#">
+      <a href="https://github.com/joshpetersdev">
         <slot name="github-logo"></slot>
       </a>
-      <a href="#">
+      <a href="https://www.linkedin.com/in/joshuagpeters/">
         <slot name="linkedin-logo"></slot>
       </a>
     </div>

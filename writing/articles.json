@@ -1,0 +1,18 @@
+[
+  {
+    "title": "LRU Cache",
+    "date": "August 15, 2025",
+    "tags": ["#DataStructures", "#Algorithms", "#Hashmaps", "#LinkedLists"],
+    "url": "writing/lru-cache.html"
+  },
+  {
+    "title": "Verify Sudoku Board",
+    "date": "August 14, 2025",
+    "tags": ["#DataStructures", "#Algorithms", "#Hashmaps"]
+  },
+  {
+    "title": "Triplet Sum",
+    "date": "August 13, 2025",
+    "tags": ["#DataStructures", "#Algorithms", "#TwoPointers"]
+  }
+]
