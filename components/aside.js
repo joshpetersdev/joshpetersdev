@@ -51,7 +51,7 @@ template.innerHTML = `
     <h1 id="mobile-header">Josh Peters</h1>
     <nav>
       <a href="/" data-path>About</a>
-      <a href="/writing/writing.html" data-path>Writing</a>
+      <a href="/writing.html" data-path>Writing</a>
       <a href="/projects" data-path>Projects</a>
   </aside>
 `;
