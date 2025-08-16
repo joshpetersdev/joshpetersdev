@@ -50,9 +50,9 @@ template.innerHTML = `
     <a href="/" id="logo">JP</a>
     <h1 id="mobile-header">Josh Peters</h1>
     <nav>
-      <a href="/">About</a>
-      <a href="/writing/writing.html">Writing</a>
-      <a href="/projects">Projects</a>
+      <a href="/" data-path>About</a>
+      <a href="/writing/writing.html" data-path>Writing</a>
+      <a href="/projects" data-path>Projects</a>
   </aside>
 `;
 
@@ -60,7 +60,15 @@ class Aside extends HTMLElement {
   constructor() {
     super();
     const shadow = this.attachShadow({ mode: 'open' });
-    shadow.append(template.content.cloneNode(true))
+    shadow.append(template.content.cloneNode(true));
+
+    const isDev = location.hostname === "localhost" || location.hostname === "127.0.0.1";
+    const basePath = isDev ? "/" : "/joshuapetersdev/";
+
+    shadow.querySelectorAll('a[data-path]').forEach(link => {
+      const path = link.getAttribute('data-path');
+      link.setAttribute('href', basePath + path);
+    });
   }
 }
 
