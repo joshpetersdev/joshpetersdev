@@ -59,6 +59,7 @@ i {
 @media(min-width: 768px) {
   .body-container {
     flex-direction: row;
+    width: 100%;
   }
 
   .desktop-header {

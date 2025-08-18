@@ -22,7 +22,7 @@ a {
 
 .article {
   display: flex;
-  flex: 1;
+  /* flex: 1; */
   flex-direction: column;
   padding: .5rem;
 }
@@ -60,7 +60,9 @@ a {
     font-size: small;
   }
 
-  /* .article { */
-    /* min-width: 500px; */
-  /* } */
+  .date-aside {
+    color: #FDFDFF;
+    text-align: right;
+    width: 200px;
+  }
 }
