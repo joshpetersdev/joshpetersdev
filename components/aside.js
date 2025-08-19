@@ -53,6 +53,7 @@ template.innerHTML = `
       <a data-path="">About</a>
       <a data-path="writing.html">Writing</a>
       <a href="/projects" data-path>Projects</a>
+    </nav>
   </aside>
 `;
 

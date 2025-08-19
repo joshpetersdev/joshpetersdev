@@ -10,7 +10,7 @@ footerTemplate.innerHTML = `
       align-items: center;
       justify-content: space-between;
       color: #C6C5B9;
-      margin-top: 10rem;
+      margin-top: 8rem;
       padding-bottom: 5rem;
     }
 
