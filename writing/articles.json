@@ -1,9 +1,9 @@
 [
   {
-    "title": "Verify Sudoku Board",
+    "title": "HTTP Server in Golang",
     "date": "August 14, 2025",
     "tags": ["#DataStructures", "#Algorithms", "#Hashmaps"],
-    "url": "writing/verify-sudoku.html"
+    "url": "writing/http-server.html"
   },
   {
     "title": "LRU Cache",
