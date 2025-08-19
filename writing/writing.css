@@ -49,6 +49,10 @@ a {
 .ascii-code {
   font-size: xx-small;
   color: #C6C5B9;
+  max-width: 100%;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
 .leetcode-link {
