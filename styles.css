@@ -51,10 +51,6 @@ i {
   line-height: normal;
 }
 
-#go {
-  color: #62929E;
-}
-
 @media(min-width: 768px) {
   .body-container {
     flex-direction: row;
