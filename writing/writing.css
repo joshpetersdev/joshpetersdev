@@ -47,7 +47,7 @@ a {
 }
 
 .ascii-code {
-  font-size: xx-small;
+  font-size: 8px;
   color: #C6C5B9;
   max-width: 100%;
   overflow-x: auto;
