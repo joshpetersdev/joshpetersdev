@@ -64,7 +64,7 @@ class Aside extends HTMLElement {
     shadow.append(template.content.cloneNode(true));
 
     const isDev = location.hostname === "localhost" || location.hostname === "127.0.0.1";
-    const basePath = isDev ? "/" : "/joshuapetersdev/";
+    const basePath = isDev ? "/" : "/joshpetersdev/";
 
     shadow.querySelectorAll('a[data-path]').forEach(link => {
       const path = link.getAttribute('data-path');
