@@ -52,7 +52,7 @@ template.innerHTML = `
     <nav>
       <a data-path="">About</a>
       <a data-path="writing.html">Writing</a>
-      <a href="/projects" data-path>Projects</a>
+      <a data-path="projects.html">Projects</a>
     </nav>
   </aside>
 `;
