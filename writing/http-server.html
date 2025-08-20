@@ -12,6 +12,20 @@
   <script src="https://kit.fontawesome.com/77b1d2e451.js" crossorigin="anonymous"></script>
   <script defer src="../components/aside.js"></script>
   <script defer src="../components/footer.js"></script>
+  <style>
+    pre {
+      background: #1e1e1e;
+      color: #dcdcdc;
+      padding: 1rem;
+      border-radius: 8px;
+      font-family: monospace;
+      white-space: pre-wrap;
+    }
+    .highlight {
+      color: #62929E; /* highlight color */
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
   <div class="body-container">
@@ -27,6 +41,8 @@
             One of the reasons I love Golang is because of the straightword implementation of HTTP servers that can be accomplished using this language.
           </p>
 
+          <pre class="go-code">x, y := 0, 1</pre>
+
         </div>
       <my-footer>
         <i class="fa-solid fa-envelope" slot="email-logo"></i>
@@ -35,5 +51,11 @@
       </my-footer>
     </main>
   </div>
+
+  <script type="module">
+    import { applyHighlights } from "../scripts/code-highlights.js";
+
+    document.addEventListener("DOMContentLoaded", applyHighlights);
+  </script>
 </body>
 </html>

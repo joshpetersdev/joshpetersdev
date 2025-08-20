@@ -1,0 +1,95 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../../styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Arimo:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../writing/writing.css">
+  <title>Josh Peters - HTTP Server</title>
+  <script src="https://kit.fontawesome.com/77b1d2e451.js" crossorigin="anonymous"></script>
+  <script defer src="../../components/aside.js"></script>
+  <script defer src="../../components/footer.js"></script>
+  <style>
+    pre {
+      color: #FDFDFF;
+      padding: 1rem;
+      border-radius: 8px;
+      font-family: monospace;
+      white-space: pre-wrap;
+    }
+    .highlight {
+      color: #62929E; /* highlight color */
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="body-container">
+    <my-aside></my-aside>
+    <main>
+      <h1 class="desktop-header">JOSH PETERS</h1>
+      <div class="content-container">
+        <h2 class="article-title">Next Permutation</h2>
+        <sub class="article-date">August 20, 2025</sub>
+        <div class="text-body">
+                  
+          <p>This is the solution to the <a href="https://leetcode.com/problems/next-permutation/" class="leetcode-link">Next Permutation</a> problem.</p>
+
+          <p>First, since I am using Golang, I will need to import the <code>slices</code> and <code>reflect</code> packages from the standard library.</p>
+
+          <pre class="go-code">
+import (
+    "slices"
+    "reflect"
+)
+          </pre>
+          
+          <p>Second, we scan the array from right to left, looking for the first position where a number is smaller than the number immediately after it. This marks the point where the increasing order (from the right side) breaks. We'll call this position the <i>valley</i>, since it's the point where the next permutation can be formed.</p>
+
+          <pre class="go-code">
+valley := -1
+
+for i := len(nums) - 2; i >= 0; i-- {
+    num := nums[i]
+    numAfter := nums[i + 1]
+    if num < numAfter {
+        valley = i
+        break
+    }
+}
+          </pre>
+          <pre>
+    if valleyIndex == -1 {
+        slices.Reverse(nums)
+        return
+    }
+
+    nextHigher := len(nums) - 1
+    for nums[nextHigher] <= nums[valleyIndex] {
+        nextHigher--
+    }
+    swapFunc := reflect.Swapper(nums)
+    swapFunc(valleyIndex, nextHigher)
+    slices.Reverse(nums[valleyIndex + 1:])
+}
+          </pre>
+
+        </div>
+      <my-footer>
+        <i class="fa-solid fa-envelope" slot="email-logo"></i>
+        <i class="fa-brands fa-github" slot="github-logo"></i>
+        <i class="fa-brands fa-linkedin" slot="linkedin-logo"></i>
+      </my-footer>
+    </main>
+  </div>
+
+  <script type="module">
+    import { applyHighlights } from "../../scripts/code-highlights.js";
+
+    document.addEventListener("DOMContentLoaded", applyHighlights);
+  </script>
+</body>
+</html>
