@@ -21,7 +21,7 @@
       white-space: pre-wrap;
     }
     .highlight {
-      color: #62929E; /* highlight color */
+      color: #86D4DE;
       font-weight: bold;
     }
   </style>
@@ -36,9 +36,9 @@
         <sub class="article-date">August 20, 2025</sub>
         <div class="text-body">
                   
-          <p>This is the solution to the <a href="https://leetcode.com/problems/next-permutation/" class="leetcode-link">Next Permutation</a> problem.</p>
+          <p>This is the solution to the <a href="https://leetcode.com/problems/next-permutation/" class="leetcode-link" style="text-decoration: underline;">Next Permutation</a> problem.</p>
 
-          <p>First, since I am using Golang, I will need to import the <code>slices</code> and <code>reflect</code> packages from the standard library.</p>
+          <p>Since I am using <span style="color: #86D4DE;">Golang</span> I will need to import the <i>slices</i> and <i>reflect</i> packages from the standard library.</p>
 
           <pre class="go-code">
 import (
@@ -47,7 +47,7 @@ import (
 )
           </pre>
           
-          <p>Second, we scan the array from right to left, looking for the first position where a number is smaller than the number immediately after it. This marks the point where the increasing order (from the right side) breaks. We'll call this position the <i>valley</i>, since it's the point where the next permutation can be formed.</p>
+          <p><b>Step 1 - Find the pivot (valley)</b><br>First, we scan the array from right to left, looking for the first position where a number is smaller than the number immediately after it. This marks the point where the increasing order (from the right side) breaks. We'll call this position the <i>valley</i>, since it's the point where the next permutation can be formed.</p>
 
           <pre class="go-code">
 valley := -1
@@ -61,22 +61,40 @@ for i := len(nums) - 2; i >= 0; i-- {
     }
 }
           </pre>
-          <pre>
-    if valleyIndex == -1 {
-        slices.Reverse(nums)
-        return
-    }
 
-    nextHigher := len(nums) - 1
-    for nums[nextHigher] <= nums[valleyIndex] {
-        nextHigher--
-    }
-    swapFunc := reflect.Swapper(nums)
-    swapFunc(valleyIndex, nextHigher)
-    slices.Reverse(nums[valleyIndex + 1:])
+          <p><b>Step 2 - Handle the descending case</b><br>If no such position or <i>valley</i> is found, it means the array is in descending order, which is the largest possible permutation. In this case, the next permutation is simply the smallest one &#8212; so we reverse the entire array and return.</p>
+
+          <pre class="go-code">
+if valley == -1 {
+    slices.Reverse(nums)
+    return
 }
           </pre>
 
+          <p><b>Step 3 - Find the next larger number to swap</b><br>Otherwise, once we’ve found the <i>valley</i>, we need to increase the number at that position just enough to make the sequence larger, but still as small as possible. To do this, we scan from the end of the array again, looking for the first number that is greater than the number at the <i>valley</i> index. We’ll call this the <i>nextHigher</i> number.</p>
+
+          <pre class="go-code">
+nextHigher := len(nums) - 1
+for nums[nextHigher] <= nums[valley] {
+    nextHigher--
+}
+          </pre>
+
+          <p><b>Step 4 - Swap</b><br>Next, we swap the number at the valley index with the <i>nextHigher</i> number. This guarantees that we’re making the smallest possible increase to the sequence.</p>
+
+          <pre class="go-code">
+swapFunc := reflect.Swapper(nums)
+swapFunc(valley, nextHigher)
+          </pre>
+
+          <p><b>Step 5 - Reverse the suffix</b><br>Finally, the part of the array to the right of the valley index is still in descending order. To complete the next permutation, we reverse this suffix, which puts it into ascending order and ensures the result is the smallest possible sequence greater than the original.</p>
+
+          <pre class="go-code">
+slices.Reverse(nums[valley + 1:])
+          </pre>
+          
+          <p><b>Time Complexity</b> = <i>O(n)</i> (where <i>n</i> is the size of the array).</p>
+          <p><b>Space Complexity</b> = <i>O(1)</i> (array is modified in-place, no additional data structures are created).</p>
         </div>
       <my-footer>
         <i class="fa-solid fa-envelope" slot="email-logo"></i>

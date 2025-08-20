@@ -3,6 +3,7 @@ footerTemplate.innerHTML = `
   <style>
     a {
       text-decoration: none;
+      color: #C6C5B9;
     }
 
     footer {

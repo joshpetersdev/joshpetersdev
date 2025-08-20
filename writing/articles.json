@@ -7,7 +7,7 @@
   },
   {
     "title": "HTTP Server in Golang",
-    "date": "August 14, 2025",
+    "date": "August 17, 2025",
     "tags": ["#DataStructures", "#Algorithms", "#Hashmaps"],
     "url": "writing/http-server.html"
   },
@@ -15,6 +15,6 @@
     "title": "LRU Cache",
     "date": "August 15, 2025",
     "tags": ["#DataStructures", "#Algorithms", "#Hashmaps", "#LinkedLists"],
-    "url": "writing/lru-cache.html"
+    "url": "writing/dsa/lru-cache.html"
   }
 ]
