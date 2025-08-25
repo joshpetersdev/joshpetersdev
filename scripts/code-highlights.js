@@ -9,17 +9,23 @@ const goKeywords = new Set([
 
 export function highlightGoCode(code) {
   // Tokenizer:
+  // - comments (//...)
   // - string literals (double quotes or backticks)
   // - composite tokens like []int
   // - identifiers / numbers
   // - operators & punctuation
   // - whitespace (spaces, tabs, newlines)
-  const tokens = code.match(/".*?"|`[^`]*`|\[\]\w+|\w+|[+\-*/=<>!:&|^%]+|[()[\]{}.,;]|[\s]+/g) || [];
+  const tokens = code.match(/\/\/.*|".*?"|`[^`]*`|\[\]\w+|\w+|[+\-*/=<>!:&|^%]+|[()[\]{}.,;]|[\s]+/g) || [];
 
   return tokens.map(tok => {
     // Keep whitespace untouched
     if (/^\s+$/.test(tok)) {
       return tok;
+    }
+
+    // Comments
+    if (tok.startsWith("//")) {
+      return `<span class="highlight comment">${tok}</span>`;
     }
 
     // Keywords

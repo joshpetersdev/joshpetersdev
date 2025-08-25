@@ -24,6 +24,10 @@
       color: #86D4DE;
       font-weight: bold;
     }
+    .highlight.comment {
+      color: #C6C5B9;
+      font-style: italic;
+    }
   </style>
 </head>
 <body>
@@ -44,14 +48,7 @@ import (
 )
           </pre>
 
-          <p><b>Step 1 - Create a ServeMux and Register Routes</b><br>The first step is to create an <code>http.ServeMux</code>, which acts as an HTTP request multiplexer. It matches incoming request paths against registered patterns and dispatches them to the appropriate handler functions. After we create the mux, we register handler functions using <code>HandleFunc</code>, which associates a URL pattern with a function that has the signature <code>func(http.ResponseWriter, *http.Request)</code>.</p>
-
-          <p><b><code>http.ResponseWriter (w)</code></b><br>
-            <ul>
-              <li>Think of it as your way to send data back to the client (the browser, curl, Postman, etc.)</li>
-              <li>It implements the Writer interface, so you can write text, JSON, HTML, or anything else to it using functions like <code>fmt.Fprint</code></li>
-            </ul
-          </p>
+          <p><b>Step 1 - Create a ServeMux and Register Home Route</b><br>The first step is to create an <code>http.ServeMux</code>, which acts as an HTTP request multiplexer. It matches incoming request paths against registered patterns and dispatches them to the appropriate handler functions. After we create the mux, we register handler functions using <code>HandleFunc</code>, which associates a URL pattern with a function that has the signature <code>func(http.ResponseWriter, *http.Request)</code>.</p>
 
           <pre class="go-code">
 func main() {
@@ -62,14 +59,27 @@ func main() {
 }
 
 func handleRoot(w http.ResponseWriter, r *http.Request) {
-
+  fmt.Fprintf(w, "Hello World")
 }
+          </pre>
+
+          <p>The <code>http.ResponseWriter</code> is what your handler uses to send data back to the client. Whenever someone makes a request to your server, you use the ResponseWriter to write the response body, set headers, or define the HTTP status code. Think of it as your "response tool" for shaping what the client receives.</p>
+
+          <p>The <code>*http.Request</code> represents the incoming request from the client. It holds all the details about what the client is asking for &#8212; such as the URL path, query parameters, headers, method(<code>GET</code>, <code>POST</code>, etc.), and even the request body if the client sent data.</p>
+
+          <p><b>Step 2 - POST Requests</p>
+
+          <pre class="go-code">
+// main.go 
+// After mux.HandleFunc("/", handleRoot)
+
+mux.HandleFunc("POST /users")
           </pre>
 
         </div>
       <my-footer>
         <i class="fa-solid fa-envelope" slot="email-logo"></i>
-        <i class="fa-brands fa-github" slot="github-logo"></i>
+        <i class="fa-brands fa-github" slot="github-logo"></i> 
         <i class="fa-brands fa-linkedin" slot="linkedin-logo"></i>
       </my-footer>
     </main>
