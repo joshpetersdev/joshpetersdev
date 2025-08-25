@@ -2,13 +2,13 @@
   {
     "title": "Next Permutation",
     "date": "August 20, 2025",
-    "tags": ["#DataStructures", "#Algorithms", "#Hashmaps"],
+    "tags": ["#DataStructures", "#Algorithms", "#TwoPointers"],
     "url": "writing/dsa/next-permutation.html"
   },
   {
     "title": "HTTP Server in Golang",
     "date": "August 17, 2025",
-    "tags": ["#DataStructures", "#Algorithms", "#Hashmaps"],
+    "tags": ["#WebDevelopment"],
     "url": "writing/http-server.html"
   },
   {
