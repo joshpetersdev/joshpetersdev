@@ -78,7 +78,7 @@ func handleRoot(w http.ResponseWriter, r *http.Request) {
 
           <p>The <code>*http.Request</code> represents the incoming request from the client. It holds all the details about what the client is asking for &#8212; such as the URL path, query parameters, headers, method(<code>GET</code>, <code>POST</code>, etc.), and even the request body if the client sent data.</p>
 
-          <p style="margin-top: 3rem;"><b>POST Requests</b><br>In Go's HTTP package, we can register handlers for specific routes and HTTP methods using <code>mux.HandleFunc</code>. By prefixing the route with <code>POST</code>, we are telling the multiplexer that this handler should only respond to requests sent with the <b>POST</b> method at the <code>/users</code> path.</p>
+          <p style="margin-top: 3rem;"><b>POST Request</b><br>In Go's HTTP package, we can register handlers for specific routes and HTTP methods using <code>mux.HandleFunc</code>. By prefixing the route with <code>POST</code>, we are telling the multiplexer that this handler should only respond to requests sent with the <b>POST</b> method at the <code>/users</code> path.</p>
 
           <pre class="go-code">
 func main() {
@@ -108,7 +108,68 @@ func createUser(w http.ResponseWriter, r *http.Request) {
 
           <p>When a request is made, the <code>createUser</code> handler function decodes the JSON body into a <code>User</code> struct. It checks that the <code>name</code> field is provided, saves the user in a cache, and responds with a <code>204 No Content</code> status if everything is valid.</p>
 
-          <p style="margin-top: 3rem;"><b>Thread Safety</b><br>The state of our current program is not thread safe.</p>
+          <p style="margin-top: 3rem;"><b>Thread Safety</b><br>There is currently an issue with our program. Because we can access the user cache and write to it or read from it, this could create a race condition. To make it thread safe, we need to create a mutex. Above our <code>main</code> function, let's create this mutex:</p>
+
+          <pre class="go-code">
+var cacheMutex sync.RWMutex
+          </pre>
+
+          <p>What we just created is a read and write mutex. It blocks all the reading and writing when this mutex gets locked. A mutex, in general, is a safe way to synchronize your data in a multi-threaded application. Our web server is multi-threaded so it is necessary to have a mutex. Our mutex will block all incoming requests when it is locked. Now, inside the <code>createUser</code> function we will use our <code>RWMutex</code>:</p>
+
+          <pre class="go-code">
+func createUser(w http.ResponseWriter, r *http.Request) {
+// [...]
+  cacheMutex.Lock()
+  userCache[len(userCache) + 1] = user
+  cacheMutex.Unlock()
+// [...]
+}
+          </pre>
+
+          <p><b>GET Request</b><br>Going back to the <code>main</code> function, let's register a <code>GET</code> request right after our <code>POST</code> request.</p>
+
+          <pre class="go-code">
+func main() {
+// [...]
+  mux.HandleFunc("POST /users", createUser)
+  mux.HandleFunc("GET /users/{id}", getUser)
+// [...]
+}
+          </pre>
+
+          <p>You'll notice that the <code>GET</code> request is similar to our <code>POST</code> request but has a path parameter added to it. The path parameter is the <code>{id}</code> and is user-defined. For example, if we request <code>/users/1</code> this will retrieve a user with an ID of 1.</p>
+
+          <p>Next, let's implement the handler function for our GET request.</p>
+
+          <pre class="go-code">
+func getUser(w http.ResponseWriter, r *http.Request) {
+  id, err := strconv.Atoi(r.PathValue("id"))
+  if err != nil {
+    http.Error(w, err.Error(), http.StatusBadRequest)
+    return
+  }
+
+  cacheMutex.RLock()
+  user, ok := userCache[id]
+  cacheMutex.RUnlock()
+  if !ok {
+    http.Error(w, "user not found", http.StatusNotFound)
+    return
+  }
+
+  w.Header().Set("Content-Type", "application/json")
+  j, err := json.Marshal(user)
+  if err != nil {
+    http.Error(w, err.Error(), http.StatusInternalServerError)
+    return
+  }
+
+  w.WriteHeader(http.StatusOK)
+  w.Write(j)
+}
+          </pre>
+
+          <p>In the above function, we retrieve the user by their ID by extracting the <code>id</code> from the request path and converting it to a number. If the conversion fails, it returns a <code>400 Bad Request</code>. To safely read from the shared <code>userCache</code>, it uses a read lock (<code>cacheMutex.RLock()</code>) and releases it afterward to prevent race conditions when multiple requests access the cache at the same time. Then it checks the cache for a matching user, and if no user is found, it responds with a <code>404 Not Found</code>. If the user exists, it converts the user struct to JSON, sets the response type to <code>application/json</code>, and sends the data back with a <code>200 OK</code> status. This ensures that clients can fetch user details in a clean and structured way. 
         </div>
       <my-footer>
         <i class="fa-solid fa-envelope" slot="email-logo"></i>
