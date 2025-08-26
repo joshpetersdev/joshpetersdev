@@ -11,6 +11,36 @@
   <script src="https://kit.fontawesome.com/77b1d2e451.js" crossorigin="anonymous"></script>
   <script defer src="components/aside.js"></script>
   <script defer src="components/footer.js"></script>
+  <style>
+    a {
+      text-decoration: none;
+      color: #FDFDFF;
+      background-color: #546A7B;
+      padding: 1rem;
+      border-radius: 8px;
+    }
+    main {
+      flex: 1;
+    }
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex: 1;
+    }
+    h2.project-title {
+      margin: 0;
+    }
+    .project-date {
+      font-size: small;
+      font-style: italic;
+    }
+    .project-tags {
+      padding-top: .5rem;
+      font-size: small;
+      color: #C6C5B9;
+    }
+  </style>
 </head>
 <body>
   <div class="body-container">
@@ -18,7 +48,15 @@
     <main>
       <h1 class="desktop-header">JOSH PETERS</h1>
       <div class="content-container">
-        Coming Soon...
+        <a href="projects/multi-tenant-university.html">
+          <div class="card-header">
+            <h2 class="project-title">Multi-tenant University Website</h2>
+            <span class="project-date">December 10, 2024</span>
+          </div>
+          <div class="project-tags">
+            <span>Next.js, JavaScript, MongoDB, Node.js</span>
+          </div>
+        </a>
       </div>
       <my-footer>
         <i class="fa-solid fa-envelope" slot="email-logo"></i>
