@@ -47,7 +47,7 @@ template.innerHTML = `
   </style>
 
   <aside>
-    <a data-path="" id="logo">JP</a>
+    <a href="/joshpetersdev/" id="logo">JP</a>
     <h1 id="mobile-header">Josh Peters</h1>
     <nav>
       <a data-path="">About</a>
