@@ -28,6 +28,11 @@
       color: #C6C5B9;
       font-style: italic;
     }
+    code {
+      background-color: #2C2F31;
+      padding: .25rem;
+      border-radius: 3px;
+    }
   </style>
 </head>
 <body>
@@ -40,15 +45,21 @@
         <sub class="article-date">August 17, 2025</sub>
         <div class="text-body">
           
-          <p>In this article, I will walk you through how to create an HTTP server in Golang without using any third-party dependencies. We will utilize the <code>net/http</code> package, so be sure to import that.</p>
+          <p><b>Introduction</b><br>In this article, I will walk you through how to create an HTTP server in Golang without using any third-party dependencies. We will utilize the <code>net/http</code> package, so be sure to import that. We will create a mock database by utilizing maps. We will be storing multiple users, so we need to create a <code>User</code> struct. It is important to note that when creating the User struct we need to include the JSON struct tag so that the attribute gets mapped to a valid JSON representation.</p>
 
           <pre class="go-code">
 import (
   "net/http"
 )
+
+type User struct {
+  Name string `json:"name"`
+}
+
+var userCache = make(map[int]User)
           </pre>
 
-          <p><b>Step 1 - Create a ServeMux and Register Home Route</b><br>The first step is to create an <code>http.ServeMux</code>, which acts as an HTTP request multiplexer. It matches incoming request paths against registered patterns and dispatches them to the appropriate handler functions. After we create the mux, we register handler functions using <code>HandleFunc</code>, which associates a URL pattern with a function that has the signature <code>func(http.ResponseWriter, *http.Request)</code>.</p>
+          <p><b>Create a ServeMux and Register Home Route</b><br>The first step is to create an <code>http.ServeMux</code>, which acts as an HTTP request multiplexer. It matches incoming request paths against registered patterns and dispatches them to the appropriate handler functions. After we create the mux, we register handler functions using <code>HandleFunc</code>, which associates a URL pattern with a function that has the signature <code>func(http.ResponseWriter, *http.Request)</code>.</p>
 
           <pre class="go-code">
 func main() {
@@ -67,15 +78,37 @@ func handleRoot(w http.ResponseWriter, r *http.Request) {
 
           <p>The <code>*http.Request</code> represents the incoming request from the client. It holds all the details about what the client is asking for &#8212; such as the URL path, query parameters, headers, method(<code>GET</code>, <code>POST</code>, etc.), and even the request body if the client sent data.</p>
 
-          <p><b>Step 2 - POST Requests</p>
+          <p style="margin-top: 3rem;"><b>POST Requests</b><br>In Go's HTTP package, we can register handlers for specific routes and HTTP methods using <code>mux.HandleFunc</code>. By prefixing the route with <code>POST</code>, we are telling the multiplexer that this handler should only respond to requests sent with the <b>POST</b> method at the <code>/users</code> path.</p>
 
           <pre class="go-code">
-// main.go 
-// After mux.HandleFunc("/", handleRoot)
+func main() {
+  // [...]
+  mux.HandleFunc("POST /users", createUser)
+  // [...]
+}
 
-mux.HandleFunc("POST /users")
+func createUser(w http.ResponseWriter, r *http.Request) {
+  var user User
+  err := json.NewDecoder(r.Body).Decode(&user)
+  if err != nil {
+    http.Error(w, err.Error(), http.BadRequest)
+    return
+  }
+
+  if user.Name == "" {
+    http.Error(w, "name is required", http.BadRequest)
+    return
+  }
+
+  userCache[len(userCache) + 1] = user
+
+  w.WriteHeader(http.StatusNoContent)
+}
           </pre>
 
+          <p>When a request is made, the <code>createUser</code> handler function decodes the JSON body into a <code>User</code> struct. It checks that the <code>name</code> field is provided, saves the user in a cache, and responds with a <code>204 No Content</code> status if everything is valid.</p>
+
+          <p style="margin-top: 3rem;"><b>Thread Safety</b><br>The state of our current program is not thread safe.</p>
         </div>
       <my-footer>
         <i class="fa-solid fa-envelope" slot="email-logo"></i>
