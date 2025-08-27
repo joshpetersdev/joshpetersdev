@@ -28,6 +28,9 @@
       color: #C6C5B9;
       font-style: italic;
     }
+    .bash-code {
+      color: #c5c8c6;
+    }
     code {
       background-color: #2C2F31;
       padding: .25rem;
@@ -169,7 +172,70 @@ func getUser(w http.ResponseWriter, r *http.Request) {
 }
           </pre>
 
-          <p>In the above function, we retrieve the user by their ID by extracting the <code>id</code> from the request path and converting it to a number. If the conversion fails, it returns a <code>400 Bad Request</code>. To safely read from the shared <code>userCache</code>, it uses a read lock (<code>cacheMutex.RLock()</code>) and releases it afterward to prevent race conditions when multiple requests access the cache at the same time. Then it checks the cache for a matching user, and if no user is found, it responds with a <code>404 Not Found</code>. If the user exists, it converts the user struct to JSON, sets the response type to <code>application/json</code>, and sends the data back with a <code>200 OK</code> status. This ensures that clients can fetch user details in a clean and structured way. 
+          <p>In the above function, we retrieve the user by their ID by extracting the <code>id</code> from the request path and converting it to a number. If the conversion fails, it returns a <code>400 Bad Request</code>. To safely read from the shared <code>userCache</code>, it uses a read lock (<code>cacheMutex.RLock()</code>) and releases it afterward to prevent race conditions when multiple requests access the cache at the same time. Then it checks the cache for a matching user, and if no user is found, it responds with a <code>404 Not Found</code>. If the user exists, it converts the user struct to JSON, sets the response type to <code>application/json</code>, and sends the data back with a <code>200 OK</code> status. This ensures that clients can fetch user details in a clean and structured way.</p>
+
+          <p style="margin-top: 3rem;"><b>DELETE Request</b><br>Let's implement a <code>DELETE</code> request to remove users from our mock database. We will again return to our <code>main</code> function and register the appropriate request. Similar to our <code>GET</code> request we need to add a path parameter to specify which user we want to delete.</p>
+
+          <pre class="go-code">
+func main() {
+// [...]
+  mux.HandleFunc("POST /users", createUser)
+  mux.HandleFunc("GET /users/{id}", getUser)
+  mux.HandleFunc("DELETE /user/{id}", deleteUser)
+// [...]
+}
+          </pre>
+
+          <p>Now, we need to define our <code>deleteUser</code> handler function:</p>
+
+          <pre class="go-code">
+func deleteUser(w http.ResponseWriter, r *http.Request) {
+  id, err := strconv.Atoi(r.PathValue("id"))
+  if err != nil {
+    http.Error(w, err.Error(), http.StatusBadRequest)
+    return
+  }
+
+  if _, ok := userCache[id]; !ok {
+    http.Error(w, "user not found", http.StatusBadRequest)
+    return
+  }
+  
+  cacheMutex.Lock()
+  delete(userCache, id)
+  cacheMutex.Unlock()
+
+  w.WriteHeader(http.StatusNoContent)
+}
+          </pre>
+
+          <p>Hopefully, you don't need much of an explanation by this point. As you can see, the above function is very similar to our <code>getUser</code> function so I won't go into detail about what this code is doing.</p>
+
+          <p style="margin-top: 3rem;"><b>Testing</b><br>Lastly, let's test our server to make sure it is functioning as expected. Below are <code>curl</code> commands to test the <code>POST</code>, <code>GET</code>, and <code>DELETE</code> requests of our server:</p>
+
+          <pre class="bash-code">
+curl -X POST http://localhost:8080/users \
+  -H "Content-Type: application/json" \
+  -d '{"name": "John"}' -v
+          </pre>
+
+          <p>You should get a <code>204 No Content</code> response.</p>
+
+          <pre class="bash-code">
+curl http://localhost:8080/users/1 -v
+          </pre>
+
+          <p>The response for this request should be <code>{"name": "John"}</code> with a status code of <code>200 OK</code>.</p>
+
+          <pre class="bash-code">
+curl -X DELETE http://localhost:8080/user/1 -v
+          </pre>
+
+          <p>After running our <code>DELETE</code> request, we should get a status code of <code>204 No Content</code>.</p>
+
+          <p>Run the <code>GET</code> command again. You should get a <code>404 Not Found</code> status. This verifies that everything is working properly!</p>
+
+          <p>We have finished writing our HTTP server. It is extremely simply and far from production ready. We could add additional features such as authentication or middleware but to implement these, it would make sense to use a third-party dependency. Since we are strictly using Go and it's standard libraries, we will call it good here.</p>
         </div>
       <my-footer>
         <i class="fa-solid fa-envelope" slot="email-logo"></i>
