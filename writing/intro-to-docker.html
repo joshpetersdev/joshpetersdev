@@ -1,0 +1,66 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Arimo:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../writing/writing.css">
+  <title>Josh Peters - Intro to Docker</title>
+  <script src="https://kit.fontawesome.com/77b1d2e451.js" crossorigin="anonymous"></script>
+  <script defer src="../components/aside.js"></script>
+  <script defer src="../components/footer.js"></script>
+  <style>
+     pre {
+      color: #FDFDFF;
+      padding: 1rem;
+      border-radius: 8px;
+      font-family: monospace;
+      white-space: pre-wrap;
+    }
+    .highlight {
+      color: #86D4DE;
+      font-weight: bold;
+    }
+    .highlight.comment {
+      color: #C6C5B9;
+      font-style: italic;
+    }
+    .bash-code {
+      color: #c5c8c6;
+    }
+    code {
+      background-color: #2C2F31;
+      padding: .25rem;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body>
+  <div class="body-container">
+    <my-aside></my-aside>
+    <main>
+      <h1 class="desktop-header">JOSH PETERS</h1>
+      <div class="content-container">
+        <h2 class="article-title">HTTP Server in Golang</h2>
+        <sub class="article-date">August 17, 2025</sub>
+        <div class="text-body">
+          <p></p>
+        </div>
+      <my-footer>
+        <i class="fa-solid fa-envelope" slot="email-logo"></i>
+        <i class="fa-brands fa-github" slot="github-logo"></i> 
+        <i class="fa-brands fa-linkedin" slot="linkedin-logo"></i>
+      </my-footer>
+    </main>
+  </div>
+
+  <script type="module">
+    import { applyHighlights } from "../scripts/code-highlights.js";
+
+    document.addEventListener("DOMContentLoaded", applyHighlights);
+  </script>
+</body>
+</html>
