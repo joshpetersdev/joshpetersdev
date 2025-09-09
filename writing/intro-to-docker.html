@@ -44,10 +44,40 @@
     <main>
       <h1 class="desktop-header">JOSH PETERS</h1>
       <div class="content-container">
-        <h2 class="article-title">HTTP Server in Golang</h2>
-        <sub class="article-date">August 17, 2025</sub>
+        <h2 class="article-title">Docker Container from Scratch</h2>
+        <sub class="article-date">September 8, 2025</sub>
         <div class="text-body">
-          <p></p>
+
+          <p><b>Introduction</b><br>I've relied on Docker for many projects, but I've always wondered what's happening behind the scenes. Today, I'm digging into how containers are built and how they really work under the hood. To deepen my understanding of Docker, I will build a container from scratch using Go.</p>
+
+          <p style="margin-top: 3rem;"><b>Namespaces</b><br>Namespaces are a Linus kernel feature that control what a process can "see" and interact with. They created isolated views of system resources so that process inside a container only see their own limited world, not the entire host machine. For example, with the UTS namespace, a container can have its own hostname, independent of the host. With the PID namespace, processes inside the container only see their own process IDs, starting from 1.</p>
+
+          <p>Namespaces are created using system calls (like <code>clone</code>, <code>unshare</code>, and <code>setns</code>). They are a fundamental building block of containers because they provide the illusion that each container is running on its own independent machine, even though all containers share the same underlying kernel.</p>
+
+          <p style="margin-top: 3rem;"><b>Coding Namespaces</b><br>Rather than starting our Docker image by typing the normal command (<code>docker run image &lt;cmd&gt; &lt;params&gt;</code>) we will start our container by running our <code>main.go</code> file (<code>go run main.go run &lt;cmd&gt; &lt;params&gt;</code>). Let's start by writing our <code>main</code> function:</p>
+
+          <pre class="go-code">
+func main() {
+  switch os.Args[1] {
+    case "run":
+      run()
+
+    default:
+      panic("bad command")
+  }
+}
+          </pre>
+
+          <p>Hopefully, the above code is easy to understand. We simply created a switch statement that will execute the <code>run()</code> function when "run" is passed as the first argument otherwise it <code>panic</code> and terminate the program. Let's implement the <code>run()</code> function that is called:</p>
+
+          <pre class="go-code">
+func run() {
+  fmt.Printf("Running %v\n", os.Args[2:])
+
+  cmd := exec.Command(os.Args[2], os.Args[3:]...)
+  cmd.Run()
+}
+          </pre>
         </div>
       <my-footer>
         <i class="fa-solid fa-envelope" slot="email-logo"></i>
