@@ -131,7 +131,7 @@ func run() {
 
         <pre class="go-code">
 func child() {
-  fmt.Printf("Running %v\n", Args[2:])
+  fmt.Printf("Running %v\n", os.Args[2:])
 
   syscall.Sethostname([]byte("container"))
 
