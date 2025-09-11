@@ -1,5 +1,11 @@
 [
   {
+    "title": "Building a Docker Container from Scratch in Go",
+    "date": "September 10, 2025",
+    "tags": ["#Docker", "#Tooling"],
+    "url": "writing/docker-container.html"
+  },
+  {
     "title": "Next Permutation",
     "date": "August 20, 2025",
     "tags": ["#DataStructures", "#Algorithms", "#TwoPointers"],
