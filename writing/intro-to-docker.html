@@ -45,16 +45,12 @@
       <h1 class="desktop-header">JOSH PETERS</h1>
       <div class="content-container">
         <h2 class="article-title">Docker Container from Scratch</h2>
-        <sub class="article-date">September 8, 2025</sub>
+        <sub class="article-date">September 10, 2025</sub>
         <div class="text-body">
 
-          <p><b>Introduction</b><br>I've relied on Docker for many projects, but I've always wondered what's happening behind the scenes. Today, I'm digging into how containers are built and how they really work under the hood. To deepen my understanding of Docker, I will build a container from scratch using Go.</p>
+          <p><b style="font-size: 1.17em;">Introduction</b><br>I've relied on Docker for many projects, but I've always wondered what's happening behind the scenes. Today, I'm digging into how containers are built and how they really work under the hood. To deepen my understanding of Docker, I will build a container from scratch using Go. Rather than starting our Docker image by typing the normal command (<code>docker run image &lt;cmd&gt; &lt;params&gt;</code>) we will start our container by running our <code>main.go</code> file (<code>go run main.go run &lt;cmd&gt; &lt;params&gt;</code>).</p>
 
-          <p style="margin-top: 3rem;"><b>Namespaces</b><br>Namespaces are a Linus kernel feature that control what a process can "see" and interact with. They created isolated views of system resources so that process inside a container only see their own limited world, not the entire host machine. For example, with the UTS namespace, a container can have its own hostname, independent of the host. With the PID namespace, processes inside the container only see their own process IDs, starting from 1.</p>
-
-          <p>Namespaces are created using system calls (like <code>clone</code>, <code>unshare</code>, and <code>setns</code>). They are a fundamental building block of containers because they provide the illusion that each container is running on its own independent machine, even though all containers share the same underlying kernel.</p>
-
-          <p style="margin-top: 3rem;"><b>Coding Namespaces</b><br>Rather than starting our Docker image by typing the normal command (<code>docker run image &lt;cmd&gt; &lt;params&gt;</code>) we will start our container by running our <code>main.go</code> file (<code>go run main.go run &lt;cmd&gt; &lt;params&gt;</code>). Let's start by writing our <code>main</code> function:</p>
+          <p>It should also be noted that a good understanding of Go is needed as I will not be explain every detail of the code snippets but rather a high-level overview and the code's relevancy to our implementation of containers. Let's start by setting up our <code>main</code> function:</p>
 
           <pre class="go-code">
 func main() {
@@ -68,16 +64,207 @@ func main() {
 }
           </pre>
 
-          <p>Hopefully, the above code is easy to understand. We simply created a switch statement that will execute the <code>run()</code> function when "run" is passed as the first argument otherwise it <code>panic</code> and terminate the program. Let's implement the <code>run()</code> function that is called:</p>
+          <p>Hopefully, the above code is easy to understand. We simply created a switch statement that will execute the <code>run()</code> function when "run" is passed as the first argument otherwise it will <code>panic</code> and terminate the program. Let's implement the <code>run()</code> function that is called:</p>
 
           <pre class="go-code">
 func run() {
   fmt.Printf("Running %v\n", os.Args[2:])
 
   cmd := exec.Command(os.Args[2], os.Args[3:]...)
+  cmd.Stdin = os.Stdin
+  cmd.Stdout = os.Stdout
+  cmd.Stderr = os.Stderr
   cmd.Run()
 }
           </pre>
+
+          <p>Again, the above code should be straight forward. We are printing out the command line arguments and then executing all agruments that come after the "run" argument.</p>
+
+          <p>The last step in our setup process is to create the <code>must</code> function. We will us this later in the program to catch any errors and quit execution of our program.</p>
+
+          <pre class="go-code">
+func must(err error) {
+  if err != nil {
+    panic(err)
+  }
+}
+          </pre>
+
+          <p style="margin-top: 3rem;"><b style="font-size: 1.17em;">Namespaces</b><br>Namespaces are a Linux kernel feature that control what a process can "see" and interact with. They created isolated views of system resources so that process inside a container only see their own limited world, not the entire host machine. For example, with the UTS namespace, a container can have its own hostname, independent of the host. With the PID namespace, processes inside the container only see their own process IDs, starting from 1.</p>
+
+          <p>Namespaces are created using system calls (like <code>clone</code>, <code>unshare</code>, and <code>setns</code>). They are a fundamental building block of containers because they provide the illusion that each container is running on its own independent machine, even though all containers share the same underlying kernel. Let's create our fist namespace that will allow us to change the hostname of our container:</p>
+
+          <pre class="go-code">
+func run() {
+// [...]
+  cmd.Stderr = os.Stderr
+  cmd.SysProcAttr = &syscall.SysProcAttr {
+    Cloneflags: syscall.CLONE_NEWUTS,
+  }
+  cmd.Run()
+}
+          </pre>
+
+          <p>This snippet runs a command in a new UTS namespace (CLONE_NEWUTS), which lets the process have its own hostname, separate from the host system.</p>
+
+          <p>It would be much nicer if the hostname was already setup before spawning the shell. It would also be better if the hostname appeared in the prompt as well. To accomplish this we will add another case to our switch statement in <code>main</code> that will call the <code>child()</code> function.</p>
+
+          <pre class="go-code">
+func main() {
+// [...]
+  case "child":
+    child()
+// [...]
+}
+         </pre>
+
+         <p>We will make some adjustments to our <code>cmd</code> variable.</p>
+
+         <pre class="go-code">
+func run() {
+// [...]
+  cmd := exec.Command("/proc/self/exe", append([]string{"child"}, os.Args[2:]...)...)
+}
+        </pre>
+
+        <p>Instead of directly running the target command (<code>os.Args[2]</code>), the code now re-executes the current program (<code>/proc/self/exe</code>) with a <code>"child"</code> argument in front of the original arguments. This allows the program itself to act as a wrapper/child process, giving us more control (e.g., for setting up state, namespaces, or isolation) before running the target command.</p>
+
+        <pre class="go-code">
+func child() {
+  fmt.Printf("Running %v\n", Args[2:])
+
+  syscall.Sethostname([]byte("container"))
+
+  cmd := exec.Command(os.Args[2], os.Args[3:]...)
+  cmd.Stdin = os.Stdin
+  cmd.Stdout = os.Stdout
+  cmd.Stderr = os.Stderr
+
+  cmd.Run()
+}
+         </pre>
+
+         <p>The <code>child</code> function runs inside a new process. It prints the command being exectued, sets the hostname to <code>"container"</code>, then creates a new command (<code>os.Args[2]</code> with its arguments), wiring its input/output to the parent's, and finally runs it.</p>
+
+         <p>Go to the <code>run</code> and <code>child</code> functions and let's add another namespace flag.</p>
+
+         <pre class="go-code">
+func run() {
+  fmt.Printf("Running %v as %d\n", os.Args[2:], os.Getpid())
+// [...]
+  cmd.SysProcAttr = &syscall.SysProcAttr {
+    Cloneflags: syscall.CLONE_NEWUTS | syscall.CLONE_NEWPID,
+  }
+// [...]
+}
+         </pre>
+
+         <p>Adding <code>syscall.CLONE_NEWPID</code> makes the child process run in a new PID namespace, so it sees itself as PID 1 and has its own isolated process tree.</p>
+
+         <p>In the <code>child</code> function we will add the following code:</p>
+
+         <pre class="go-code">
+func child() {
+  fmt.Printf("Running %v as %d\n", os.Args[2:], os.Getpid())
+
+  syscall.Sethostname([]byte("container"))
+  syscall.Chroot("/vagrant/ubuntu-fs")
+  syscall.Chdir("/")
+// [...]
+}
+         </pre>
+
+         <p><code>syscall.Chroot("/vagrant/ubuntu-fs")</code> changes the root filesystem for the child process to the specified directory, and <code>syscall.Chdir("/")</code> moves into that new root. Together, they isolate the process to its own filesystem view. We used <code>"/vagrant/ubuntu-fs"</code> because that directory contains the root filesystem we want the child process to see. By calling <code>chroot</code> on it, the process is restricted to that directory tree. For example, it will see <code>"/bin"</code>, <code>"/etc"</code>, <code>"/usr"</code> etc. from inside <code>"/vagrant/ubuntu-fs"</code> as if they were the system's real root.</p>
+
+         <p>We need to add another line to our <code>child</code> function:</p>
+
+         <pre class="go-code">
+func child() {
+// [...]
+  syscall.Chdir("/")
+  syscall.Mount("proc", "proc", "proc", 0, "")
+// [...]
+  cmd.Run()
+
+  syscall.Unmount("/proc", 0)
+}
+         </pre>
+
+         <p>What we just did was mount a fresh <code>/proc</code> filesystem inside the child's new root, so process-related info reflects only the processes in its PID namespace. Afterwards, we unmount the <code>/proc</code> filesystem to clean it up when the child is done, preventing it from leaking into the host.</p>
+
+         <p>Going back to the <code>run</code> function, we will add another namespace:</p>
+
+         <pre class="go-code">
+func run() {
+// [...]
+  cmd.SysProcAttr = &syscall.SysProcAttr {
+    Cloneflags: syscall.CLONE_NEWUTS | 
+                syscall.CLONE_NEWPID | 
+                syscall.CLONE_NEWNS,
+    Unshareflags: syscall.CLONE_NEWNS,
+  }
+// [...]
+}
+         </pre>
+
+         <p>Adding <code>syscall.CLONE_NEWNS</code> creates a new mount namespace for the child, giving it its own isolated view of the filesystem mounts. The <code>Unshareflags: syscall.CLONE_NEWNS</code> ensures the child doesn’t inherit the parent’s mount state, so changes to mounts inside the container (like mounting <code>/proc</code> or <code>chroot</code>) don’t affect the host.</p>
+
+         <p>So far, we have created namespaces for the Unix Timesharing System, Process IDs, and Mounts. We could also create namespaces for things like the Network, User IDs, and InterProcess Comms. However, to prevent this article from being too long we will move on to creating Control Groups or CGroups.</p>
+
+         <p style="margin-top: 3rem;"><b style="font-size: 1.17em;">CGroups</b><br>Namespaces isolate what a container can see, while cgroups (control groups) limit what resources a container can use. Cgroups are configured through special filesystem interfaces that let us set limits the kernel enforces—such as memory, CPU, I/O bandwidth, and the number of processes. The kernel also exposes usage information through this filesystem so we can monitor resource consumption. Let's implement a function for creating our Cgroups:</p>
+
+         <pre class="go-code">
+func cg() {
+  cgroups := "/sys/fs/cgroup/"
+  pids := filepath.Join(cgroups, "pids")
+  // Below, I named my control group "my-control-group" you can
+  // name it something different if you want
+  err := os.Mkdir(filepath.Join(pids, "my-control-group"), 0755)
+  if err != nil && !os.IsExists(err) {
+    panic(err) 
+  }
+  must(ioutil.WriteFile(
+      filepath.Join(pids, "my-control-group/pids.max"),
+      []byte("20"),
+      0700,
+  ))
+  // Remove the new cgroup in place after the container exits
+  must(ioutil.WriteFile(
+    filepath.Join(pids, "my-control-group/notify_on_release"),
+    []byte("1"),
+    0700,
+  ))
+  must(ioutil.WriteFile(
+    filepath.Join(pids, "my-control-group/cgroup.procs"),
+    []byte(strconv.Itoa(os.Getpid())),
+    0700,
+  ))
+}
+         </pre>
+
+         <p>The <code>cg</code> function creates a control group (cgroup) under <code>/sys/fs/cgroup/pids</code> named <code>"my-control-group"</code> to limit the container’s process usage.</p>
+         <ul>
+           <li><code>os.Mkdir(..., 0755)</code> creates the directory with read/write/execute permissions for the owner and read/execute for others.</li>
+           <li><code>"my-control-group/pids.max"</code> <code>(ioutil.WriteFile(..., 0700)</code>) sets the maximum number of processes in this cgroup to <code>20</code>.</li>
+           <li><code>"my-control-group/notify_on_release"</code> (<code>0700</code>) tells the kernel to clean up the cgroup automatically when all processes exit.</li>
+           <li><code>"my-control-group/cgroup.procs"</code> (<code>0700</code>) adds the current process (the container) to this cgroup.</li>
+          </ul>
+          <p>The <code>0700</code> permissions restrict access so only the owner (the container process) can read/write these files, enhancing isolation and security.</p>
+          <p>In short, this code limits the container to 20 processes, ensures cleanup on exit, and isolates the cgroup from other users.</p>
+
+         <p>Then, from inside the <code>child</code> function, we will call our newly created function:</p>
+
+         <pre class="go-code">
+func child() {
+  fmt.Printf("Running %v as %d\n", os.Args[2:], os.Getpid())
+
+  cg()
+// [...]
+}
+         </pre>
+
+         <p>We have finished our implementation of a Docker container. Feel free to add more namespaces and customize it as you wish. (Full source code is on my GitHub)</p>
+          
         </div>
       <my-footer>
         <i class="fa-solid fa-envelope" slot="email-logo"></i>
