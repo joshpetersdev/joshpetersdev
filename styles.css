@@ -37,7 +37,9 @@ main {
 .skill-icons-container {
   display: flex;
   width: 100%;
-  justify-content: space-between;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.5rem;
 }
 
 .skill-icon-wrapper {
@@ -45,10 +47,11 @@ main {
   height: 100%;
   flex-direction: column;
   align-items: center;
+  flex: 0 0 18%;
 }
 
 .skill-icon {
-  font-size: 1.25rem;
+  font-size: 2rem;
 }
 
 .skill-text {
@@ -58,8 +61,8 @@ main {
 }
 
 .skill-icon-png {
-  width: 1.25rem;    /* match mobile font-size */
-  height: 1.25rem;   /* maintain square shape */
+  width: 2rem;    /* match mobile font-size */
+  height: 2rem;   /* maintain square shape */
   display: block;
   margin: 0 auto;
   object-fit: contain;
@@ -88,12 +91,12 @@ main {
     color: #FDFDFF;
   }
 
-  .skill-icon {
-    font-size: 2rem;
+  .skill-icons-container {
+    justify-content: space-between;
   }
 
-  .skill-icon-png {
-    width: 2rem;      /* match desktop font-size */
-    height: 2rem;
+  .skill-icon-wrapper {
+    flex: 0 0 auto;
   }
+
 }
