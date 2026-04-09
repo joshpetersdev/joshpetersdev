@@ -7,11 +7,13 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Arimo:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" type='text/css' href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css" />
   <title>Josh Peters - About</title>
   <link rel="icon" type="image/png" href="resources/favicon.png" />
   <script src="https://kit.fontawesome.com/77b1d2e451.js" crossorigin="anonymous"></script>
   <script defer src="components/aside.js"></script>
   <script defer src="components/footer.js"></script>
+  <script defer src="components/skill-icon.js"></script>
 </head>
 <body>
   <div class="body-container">
@@ -20,11 +22,61 @@
       <h1 class="desktop-header">JOSH PETERS</h1>
       <div class="content-container">
 
-        <p>I am an embedded systems engineer that is experienced in <b>C/C++</b> and <b>Python</b> programming. I have a passion for building system-level simulations and functional models for CPUs, GPUs, and SoCs. I enjoy low-level software, hardware interfaces, and virtual platform.</p>
+        <p>
+          I’m a systems software engineer with a background in computer science and industrial automation, currently pursuing a Master’s in Electrical and Computer Engineering to deepen my expertise in low-level systems and hardware-software integration. I have experience in the following technolgies:
+        </p>
 
-        <p>Today, I work as an automation and controls engineer. I design and implement real-time control systems, develop simulations to model system behavior, and ensure deterministic, high-performance operation.</p>
+        <div class="skill-icons-container">
 
-        <p>I'm always excited to tackle new challenges, solve complex problems, and turn ideas into reliable products!</p>
+          <div class="skill-icon-wrapper">
+            <i class="devicon-linux-plain skill-icon"></i>
+            <div class="skill-text">Linux</div>
+          </div>
+
+          <div class="skill-icon-wrapper">
+            <i class="devicon-bash-plain skill-icon"></i>
+            <div class="skill-text">Bash</div>
+          </div>
+
+          <div class="skill-icon-wrapper">
+            <i class="devicon-c-original skill-icon"></i>
+            <div class="skill-text">C</div>
+          </div>
+
+          <div class="skill-icon-wrapper">
+            <i class="devicon-cplusplus-plain skill-icon"></i>
+            <div class="skill-text">C++</div>
+          </div>
+
+          <div class="skill-icon-wrapper">
+            <i class="devicon-python-plain skill-icon"></i>
+            <div class="skill-text">Python</div>
+          </div>
+
+          <div class="skill-icon-wrapper">
+            <i class="devicon-git-plain skill-icon"></i>
+            <div class="skill-text">Git</div>
+          </div>
+
+          <div class="skill-icon-wrapper">
+            <img src="resources/qemu_logo.png" alt="Qemu" class="skill-icon-png"/>
+            <div class="skill-text">QEMU</div>
+          </div>
+
+          <div class="skill-icon-wrapper">
+            <img src="resources/Pi7_x86_logo-removebg-preview.png" alt="x86" class="skill-icon-png" />
+            <div class="skill-text">x86</div>
+          </div>
+          
+        </div>
+
+        <p>
+          Professionally, I work as an automation and controls engineer, where I build and support real-world industrial systems that bridge software with physical hardware. This experience has strengthened my interest in performance-critical, embedded, and real-time computing systems.
+        </p>
+
+        <p>
+          I’m particularly focused on operating systems, Linux-based development, virtualization, and computer architecture; areas that power modern cloud, embedded, and high-performance computing platforms. My long-term goal is to design and develop system-level software for technologies such as kernels, hypervisors, and SoC platforms.
+        </p>
 
       </div>
       <my-footer>
